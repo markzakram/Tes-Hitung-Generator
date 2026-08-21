@@ -18,9 +18,15 @@
  *   --acak-opsi        jangan urutkan opsi menaik
  *   --langkah          sertakan ringkasan langkah di kunci .docx
  *   --simbol-bagi <s>  lambang pembagian: '÷' (default) atau ':'
+ *   --pdf              tulis juga versi PDF dari tiap dokumen
+ *   --zip <isi>        bungkus satu berkas per paket jadi ZIP.
+ *                      isi: pembahasan (default) | soal | berkunci | kunci
+ *   --zip-format <f>   format isi ZIP: docx (default) | pdf
  *
  * Selain soal.docx (naskah bersih), otomatis ditulis juga soal-berkunci.docx
  * yang memuat kunci tepat di bawah opsi tiap soal.
+ *
+ *   npm run generate -- --paket 10 --zip pembahasan --zip-format pdf
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -30,6 +36,13 @@ import { Packer } from 'docx';
 import { generateSemua, normalisasiOpsi, ringkas } from '../lib/generate';
 import { csvKunci, csvSoal } from '../lib/export/csv';
 import { docxKunci, docxPembahasan, docxSoal } from '../lib/export/docx';
+import {
+  berkasPerPaket,
+  buatZip,
+  dokumenGabungan,
+  type FormatBerkas,
+  type IsiBerkas,
+} from '../lib/export/berkas';
 import { DEFAULT_OPSI, type OpsiGenerate } from '../lib/types';
 import { validasiSemua } from '../lib/validate';
 
@@ -111,6 +124,21 @@ async function main() {
     `Bentuk jawaban   : ${opsi.pilihanGanda ? `pilihan ganda ${opsi.jumlahOpsi} opsi` : 'isian singkat'}`,
   ].join('\n');
   tulis('laporan-validasi.txt', laporan);
+
+  if (flag('pdf')) {
+    for (const isi of ['pembahasan', 'soal', 'berkunci', 'kunci'] as IsiBerkas[]) {
+      if (isi === 'berkunci' && !opsi.pilihanGanda) continue;
+      tulis(`${isi}.pdf`, Buffer.from(await dokumenGabungan(isi, paket, opsi, 'pdf')));
+    }
+  }
+
+  const zipIsi = nilai('zip', flag('zip') ? 'pembahasan' : undefined) as IsiBerkas | undefined;
+  if (zipIsi) {
+    const zipFormat = (nilai('zip-format', 'docx') === 'pdf' ? 'pdf' : 'docx') as FormatBerkas;
+    console.log(`  membungkus ${paket.length} berkas ${zipFormat}...`);
+    const berkas = await berkasPerPaket(zipIsi, paket, opsi, zipFormat);
+    tulis(`${zipIsi}-per-paket-${zipFormat}.zip`, Buffer.from(await buatZip(berkas)));
+  }
 
   console.log(`\nSemua berkas ada di: ${outDir}`);
   console.log(`Validasi: LOLOS (${r.totalSoal} soal, ${r.soalUnik} unik).`);

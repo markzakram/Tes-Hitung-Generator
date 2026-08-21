@@ -116,7 +116,27 @@ Berkas yang tersedia:
 | `kunci-*.csv` | Satu baris per paket, 25 kolom jawaban |
 | `*.json` | Data mentah lengkap |
 
-Untuk PDF: tekan tombol **Cetak**, lalu pilih tujuan *Save as PDF*.
+Tiga dokumen pertama tersedia dalam **Word (.docx) maupun PDF**. PDF dibuat langsung
+di browser, jadi tidak perlu lewat dialog cetak. Tombol **Cetak** tetap ada kalau
+ingin menyimpan lewat *Save as PDF* bawaan browser.
+
+### Unduh per paket dalam ZIP
+
+Kalau yang dibutuhkan adalah **satu berkas untuk tiap paket** — misalnya 10 paket jadi
+10 berkas — pakai panel **Unduh per paket (.zip)**. Pilih isinya (soal + pembahasan,
+naskah soal, atau kunci jawaban) dan formatnya (Word atau PDF), lalu semuanya
+dibungkus jadi satu ZIP:
+
+```
+pembahasan-pdf-tes-hitung-cepat-kai-2026-10paket.zip
+├── PAKET-01-pembahasan.pdf
+├── PAKET-02-pembahasan.pdf
+└── ... 10 berkas
+```
+
+Berkas `.docx` disimpan apa adanya di dalam ZIP karena formatnya sendiri sudah
+terkompresi; PDF dipadatkan. Penunjuk kemajuan berjalan per paket, jadi 100 paket pun
+tetap terpantau.
 
 ---
 
@@ -141,6 +161,13 @@ npm run generate -- --paket 100 --seed KAI-2026 --out output
 | `--tanpa-desimal` | Matikan bilangan desimal |
 | `--acak-opsi` | Jangan urutkan opsi menaik |
 | `--langkah` | Sertakan ringkasan langkah di kunci `.docx` |
+| `--pdf` | Tulis juga versi PDF dari tiap dokumen |
+| `--zip <isi>` | Bungkus satu berkas per paket jadi ZIP (`pembahasan`, `soal`, `berkunci`, `kunci`) |
+| `--zip-format <f>` | Format isi ZIP: `docx` (default) atau `pdf` |
+
+```bash
+npm run generate -- --paket 10 --zip pembahasan --zip-format pdf
+```
 
 Perintah ini menolak menulis berkas kalau ada satu saja soal yang tidak lolos validasi.
 
@@ -227,7 +254,7 @@ lib/
   parser.ts             parser independen untuk pemeriksaan silang
   distractors.ts        pembuat opsi pengecoh
   rng.ts                RNG deterministik berbasis seed
-  export/               docx & csv
+  export/               docx, pdf, csv, dan pembungkus ZIP
 components/             UI
 scripts/
   generate.ts           CLI generate ke berkas

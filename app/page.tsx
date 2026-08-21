@@ -4,12 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Kontrol from '@/components/Kontrol';
 import LembarCetak, { type TipeCetak } from '@/components/LembarCetak';
+import PanelEkspor from '@/components/PanelEkspor';
 import PratinjauPaket from '@/components/PratinjauPaket';
 import Ringkasan from '@/components/Ringkasan';
 import TabelMapping from '@/components/TabelMapping';
 
 import { generateSemua, normalisasiOpsi, ringkas } from '@/lib/generate';
-import { csvKunci, csvSoal } from '@/lib/export/csv';
 import { DETIK_PER_SOAL } from '@/lib/mapping';
 import { fmt } from '@/lib/num';
 import { DEFAULT_OPSI, type OpsiGenerate, type Paket, type Ringkasan as TRingkasan } from '@/lib/types';
@@ -23,20 +23,6 @@ type Hasil = {
   waktuMs: number;
 };
 
-function unduhBlob(nama: string, blob: Blob) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = nama;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-}
-
-const tombolUtamaKelas =
-  'rounded-lg bg-slate-900 px-3 py-2 text-[12.5px] font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50';
-
 const tombolKelas =
   'rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50';
 
@@ -47,7 +33,6 @@ export default function Halaman() {
   const [galat, setGalat] = useState<string | null>(null);
   const [aktif, setAktif] = useState(0);
   const [tampilKunci, setTampilKunci] = useState(false);
-  const [ekspor, setEkspor] = useState<string | null>(null);
   const [cetak, setCetak] = useState<{ tipe: TipeCetak; semua: boolean } | null>(null);
   const [kunciInline, setKunciInline] = useState(false);
   const sudahJalan = useRef(false);
@@ -98,34 +83,6 @@ export default function Halaman() {
     if (!hasil || !cetak) return [];
     return cetak.semua ? hasil.paket : [hasil.paket[aktif]];
   }, [hasil, cetak, aktif]);
-
-  const dasarNama = hasil
-    ? `${hasil.opsi.judul.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${hasil.opsi.seed}-${hasil.paket.length}paket`
-    : 'soal';
-
-  const jalankanEkspor = async (nama: string, fn: () => Promise<void> | void) => {
-    setEkspor(nama);
-    try {
-      await fn();
-    } catch (e) {
-      setGalat(e instanceof Error ? e.message : String(e));
-    } finally {
-      setEkspor(null);
-    }
-  };
-
-  const unduhDocx = (jenis: 'soal' | 'pembahasan' | 'kunci') =>
-    jalankanEkspor(`docx-${jenis}`, async () => {
-      if (!hasil) return;
-      const [{ Packer }, mod] = await Promise.all([import('docx'), import('@/lib/export/docx')]);
-      const doc =
-        jenis === 'soal'
-          ? await mod.docxSoal(hasil.paket, { ...hasil.opsi, kunciDiBawahOpsi: kunciInline })
-          : jenis === 'pembahasan'
-            ? await mod.docxPembahasan(hasil.paket, hasil.opsi)
-            : await mod.docxKunci(hasil.paket, hasil.opsi, true);
-      unduhBlob(`${jenis}-${dasarNama}.docx`, await Packer.toBlob(doc));
-    });
 
   const opsiEkspor = hasil ? { ...hasil.opsi, kunciDiBawahOpsi: kunciInline } : null;
   const paketAktif = hasil?.paket[aktif];
@@ -189,147 +146,15 @@ export default function Halaman() {
                     waktuMs={hasil.waktuMs}
                   />
 
-                  {/* ------------------------------------------- ekspor */}
-                  <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                    <h2 className="mb-3 text-[13px] font-bold text-slate-800">
-                      Unduh &amp; cetak
-                      <span className="ml-2 font-normal text-slate-400">
-                        seluruh {hasil.paket.length} paket
-                      </span>
-                    </h2>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        className={tombolUtamaKelas}
-                        disabled={!!ekspor}
-                        onClick={() => unduhDocx('pembahasan')}
-                      >
-                        {ekspor === 'docx-pembahasan'
-                          ? 'Menyiapkan...'
-                          : 'Soal + jawaban + pembahasan (.docx)'}
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        disabled={!!ekspor}
-                        onClick={() => unduhDocx('soal')}
-                      >
-                        {ekspor === 'docx-soal' ? 'Menyiapkan...' : 'Naskah soal saja (.docx)'}
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        disabled={!!ekspor}
-                        onClick={() => unduhDocx('kunci')}
-                      >
-                        {ekspor === 'docx-kunci' ? 'Menyiapkan...' : 'Kunci jawaban (.docx)'}
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        disabled={!!ekspor}
-                        onClick={() =>
-                          jalankanEkspor('csv-soal', () =>
-                            unduhBlob(
-                              `soal-${dasarNama}.csv`,
-                              new Blob([csvSoal(hasil.paket, hasil.opsi)], {
-                                type: 'text/csv;charset=utf-8',
-                              }),
-                            ),
-                          )
-                        }
-                      >
-                        Soal (.csv)
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        disabled={!!ekspor}
-                        onClick={() =>
-                          jalankanEkspor('csv-kunci', () =>
-                            unduhBlob(
-                              `kunci-${dasarNama}.csv`,
-                              new Blob([csvKunci(hasil.paket, hasil.opsi)], {
-                                type: 'text/csv;charset=utf-8',
-                              }),
-                            ),
-                          )
-                        }
-                      >
-                        Kunci (.csv)
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        disabled={!!ekspor}
-                        onClick={() =>
-                          jalankanEkspor('json', () =>
-                            unduhBlob(
-                              `${dasarNama}.json`,
-                              new Blob(
-                                [
-                                  JSON.stringify(
-                                    { opsi: hasil.opsi, ringkasan: hasil.ring, paket: hasil.paket },
-                                    null,
-                                    2,
-                                  ),
-                                ],
-                                { type: 'application/json' },
-                              ),
-                            ),
-                          )
-                        }
-                      >
-                        Data (.json)
-                      </button>
-
-                      <span className="mx-1 w-px self-stretch bg-slate-200" />
-
-                      <button
-                        className={tombolKelas}
-                        onClick={() => setCetak({ tipe: 'soal', semua: false })}
-                      >
-                        Cetak paket ini
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        onClick={() => setCetak({ tipe: 'soal', semua: true })}
-                      >
-                        Cetak semua paket
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        onClick={() => setCetak({ tipe: 'kunci', semua: true })}
-                      >
-                        Cetak lembar kunci
-                      </button>
-                      <button
-                        className={tombolKelas}
-                        onClick={() => setCetak({ tipe: 'pembahasan', semua: false })}
-                      >
-                        Cetak pembahasan paket ini
-                      </button>
-                    </div>
-                    {hasil.opsi.pilihanGanda ? (
-                      <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-lg bg-slate-50 p-2.5 text-[12px] text-slate-700">
-                        <input
-                          type="checkbox"
-                          checked={kunciInline}
-                          onChange={(e) => setKunciInline(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 accent-merah-500"
-                        />
-                        <span>
-                          <span className="font-semibold">
-                            Tampilkan kunci tepat di bawah opsi
-                          </span>
-                          <span className="block text-[11px] text-slate-500">
-                            Berlaku untuk &quot;Naskah soal&quot; dan tombol cetaknya. Kunci menempel
-                            di tiap soal, bukan di lembar terpisah. Matikan untuk naskah ujian yang
-                            dibagikan ke peserta.
-                          </span>
-                        </span>
-                      </label>
-                    ) : null}
-
-                    <p className="mt-2 text-[11px] text-slate-500">
-                      Untuk PDF: pilih <em>Cetak</em> lalu tujuan <em>Save as PDF</em>. Setiap paket
-                      otomatis pindah halaman.
-                    </p>
-                  </section>
+                  <PanelEkspor
+                    paket={hasil.paket}
+                    opsi={hasil.opsi}
+                    ringkasan={hasil.ring}
+                    kunciInline={kunciInline}
+                    setKunciInline={setKunciInline}
+                    onCetak={(tipe, semua) => setCetak({ tipe, semua })}
+                    onGalat={setGalat}
+                  />
 
                   {/* ---------------------------------------- pratinjau */}
                   <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
