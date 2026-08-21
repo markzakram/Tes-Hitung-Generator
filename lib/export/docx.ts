@@ -92,9 +92,10 @@ export async function docxSoal(paketList: Paket[], opsi: OpsiGenerate): Promise<
         column: { count: 2, space: 400, equalWidth: true },
       },
       children: p.soal.flatMap((s) => {
+        const adaKunciBawah = opsi.kunciDiBawahOpsi;
         const baris = [
           new Paragraph({
-            spacing: { after: opsi.pilihanGanda ? 20 : 200 },
+            spacing: { after: opsi.pilihanGanda ? 20 : adaKunciBawah ? 20 : 200 },
             children: [
               new TextRun({ text: `${s.no}. `, bold: true, size: 20 }),
               new TextRun({ text: `${s.soal} = ...`, size: 20 }),
@@ -104,12 +105,30 @@ export async function docxSoal(paketList: Paket[], opsi: OpsiGenerate): Promise<
         if (opsi.pilihanGanda) {
           baris.push(
             new Paragraph({
-              spacing: { after: 140 },
+              spacing: { after: adaKunciBawah ? 20 : 140 },
               indent: { left: 260 },
               children: [
                 new TextRun({
                   text: s.opsi.map((o, i) => `${HURUF[i]}. ${o}`).join('    '),
                   size: 18,
+                }),
+              ],
+            }),
+          );
+        }
+        // kunci menempel langsung di bawah opsinya, bukan di lembar terpisah
+        if (adaKunciBawah) {
+          baris.push(
+            new Paragraph({
+              spacing: { after: 140 },
+              indent: { left: 260 },
+              children: [
+                new TextRun({ text: 'Jawaban: ', bold: true, size: 18, color: 'B03E0B' }),
+                new TextRun({
+                  text: opsi.pilihanGanda ? s.kunci : s.jawabanTeks,
+                  bold: true,
+                  size: 18,
+                  color: 'B03E0B',
                 }),
               ],
             }),

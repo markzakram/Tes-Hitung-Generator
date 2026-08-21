@@ -52,6 +52,8 @@ export type OpsiGenerate = {
   ketat: boolean;
   /** lambang pembagian pada teks soal: '÷' (seperti dokumen mapping) atau ':' */
   simbolBagi: '÷' | ':';
+  /** cetak kunci tepat di bawah opsi tiap soal, bukan di lembar terpisah */
+  kunciDiBawahOpsi: boolean;
   /** sebar variasi agar satu blok tidak memakai pola yang itu-itu saja */
   variasiMerata: boolean;
   /** tolak hasil antara / akhir yang negatif */
@@ -71,6 +73,7 @@ export const DEFAULT_OPSI: OpsiGenerate = {
   pDesimal: 0.3,
   ketat: false,
   simbolBagi: '÷',
+  kunciDiBawahOpsi: false,
   variasiMerata: true,
   hindariNegatif: true,
   judul: 'TES HITUNG CEPAT',
@@ -84,6 +87,8 @@ export type Ringkasan = {
   perKategori: Record<string, number>;
   perTingkat: Record<string, number>;
   polaTerpakai: number;
+  /** berapa kali tiap huruf kunci muncul, mis. { A: 500, B: 500, ... } */
+  perKunci: Record<string, number>;
   soalDesimal: number;
   soalUnik: number;
   duplikat: number;

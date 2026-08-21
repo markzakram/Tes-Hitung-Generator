@@ -110,6 +110,7 @@ Berkas yang tersedia:
 | --- | --- |
 | `pembahasan-*.docx` | Soal + opsi + jawaban + pembahasan (format di atas) |
 | `soal-*.docx` | Naskah ujian saja, 2 kolom, ganti halaman per paket |
+| `soal-berkunci-*.docx` | Naskah yang sama, tetapi `Jawaban: X` menempel tepat di bawah opsi tiap soal |
 | `kunci-*.docx` | Kunci ringkas 5×5 per paket |
 | `soal-*.csv` | Satu baris per soal, termasuk kolom pembahasan |
 | `kunci-*.csv` | Satu baris per paket, 25 kolom jawaban |
@@ -232,6 +233,19 @@ scripts/
   generate.ts           CLI generate ke berkas
   verify.ts             audit kepatuhan mapping
 ```
+
+### Sebaran kunci jawaban
+
+Posisi kunci ditentukan **lebih dahulu**, bukan hasil sampingan pengurutan opsi. Tiap
+paket mendapat jatah A–E sama banyak (5 masing-masing untuk 25 soal), diacak, lalu
+dirapikan agar tidak ada tiga kunci sama berturut-turut. Barulah pengecoh dibagi ke
+sisi bawah dan atas jawaban sesuai posisi itu.
+
+Tanpa ini, opsi yang diurutkan menaik membuat jawaban benar hampir selalu mendarat di
+C, karena pengecoh terbentuk simetris di sekitar jawaban. Hasil setelah perbaikan,
+100 paket = 2.500 soal: **A 500, B 500, C 503, D 503, E 494** — masing-masing 20%.
+Selisih tipis muncul kalau jawabannya kecil sehingga tidak cukup angka positif di
+bawahnya; posisi kunci digeser seperlunya dan tercatat apa adanya di ringkasan.
 
 ### Kenapa pengecohnya masuk akal
 

@@ -18,6 +18,9 @@
  *   --acak-opsi        jangan urutkan opsi menaik
  *   --langkah          sertakan ringkasan langkah di kunci .docx
  *   --simbol-bagi <s>  lambang pembagian: '÷' (default) atau ':'
+ *
+ * Selain soal.docx (naskah bersih), otomatis ditulis juga soal-berkunci.docx
+ * yang memuat kunci tepat di bawah opsi tiap soal.
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -84,6 +87,10 @@ async function main() {
   tulis('soal.csv', csvSoal(paket, opsi));
   tulis('kunci.csv', csvKunci(paket, opsi));
   tulis('soal.docx', await Packer.toBuffer(await docxSoal(paket, opsi)));
+  if (opsi.pilihanGanda) {
+    const berkunci = { ...opsi, kunciDiBawahOpsi: true };
+    tulis('soal-berkunci.docx', await Packer.toBuffer(await docxSoal(paket, berkunci)));
+  }
   tulis('soal-pembahasan.docx', await Packer.toBuffer(await docxPembahasan(paket, opsi)));
   tulis('kunci.docx', await Packer.toBuffer(await docxKunci(paket, opsi, flag('langkah'))));
 

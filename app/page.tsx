@@ -49,6 +49,7 @@ export default function Halaman() {
   const [tampilKunci, setTampilKunci] = useState(false);
   const [ekspor, setEkspor] = useState<string | null>(null);
   const [cetak, setCetak] = useState<{ tipe: TipeCetak; semua: boolean } | null>(null);
+  const [kunciInline, setKunciInline] = useState(false);
   const sudahJalan = useRef(false);
 
   const ubah = useCallback((patch: Partial<OpsiGenerate>) => {
@@ -119,13 +120,14 @@ export default function Halaman() {
       const [{ Packer }, mod] = await Promise.all([import('docx'), import('@/lib/export/docx')]);
       const doc =
         jenis === 'soal'
-          ? await mod.docxSoal(hasil.paket, hasil.opsi)
+          ? await mod.docxSoal(hasil.paket, { ...hasil.opsi, kunciDiBawahOpsi: kunciInline })
           : jenis === 'pembahasan'
             ? await mod.docxPembahasan(hasil.paket, hasil.opsi)
             : await mod.docxKunci(hasil.paket, hasil.opsi, true);
       unduhBlob(`${jenis}-${dasarNama}.docx`, await Packer.toBlob(doc));
     });
 
+  const opsiEkspor = hasil ? { ...hasil.opsi, kunciDiBawahOpsi: kunciInline } : null;
   const paketAktif = hasil?.paket[aktif];
 
   return (
@@ -285,9 +287,15 @@ export default function Halaman() {
                       </button>
                       <button
                         className={tombolKelas}
-                        onClick={() => setCetak({ tipe: 'keduanya', semua: true })}
+                        onClick={() => setCetak({ tipe: 'soal', semua: true })}
                       >
-                        Cetak semua + kunci (PDF)
+                        Cetak semua paket
+                      </button>
+                      <button
+                        className={tombolKelas}
+                        onClick={() => setCetak({ tipe: 'kunci', semua: true })}
+                      >
+                        Cetak lembar kunci
                       </button>
                       <button
                         className={tombolKelas}
@@ -296,6 +304,27 @@ export default function Halaman() {
                         Cetak pembahasan paket ini
                       </button>
                     </div>
+                    {hasil.opsi.pilihanGanda ? (
+                      <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-lg bg-slate-50 p-2.5 text-[12px] text-slate-700">
+                        <input
+                          type="checkbox"
+                          checked={kunciInline}
+                          onChange={(e) => setKunciInline(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 accent-merah-500"
+                        />
+                        <span>
+                          <span className="font-semibold">
+                            Tampilkan kunci tepat di bawah opsi
+                          </span>
+                          <span className="block text-[11px] text-slate-500">
+                            Berlaku untuk &quot;Naskah soal&quot; dan tombol cetaknya. Kunci menempel
+                            di tiap soal, bukan di lembar terpisah. Matikan untuk naskah ujian yang
+                            dibagikan ke peserta.
+                          </span>
+                        </span>
+                      </label>
+                    ) : null}
+
                     <p className="mt-2 text-[11px] text-slate-500">
                       Untuk PDF: pilih <em>Cetak</em> lalu tujuan <em>Save as PDF</em>. Setiap paket
                       otomatis pindah halaman.
@@ -371,7 +400,7 @@ export default function Halaman() {
 
       {/* ============================================================ cetak */}
       {cetak && hasil ? (
-        <LembarCetak paketList={paketCetak} opsi={hasil.opsi} tipe={cetak.tipe} />
+        <LembarCetak paketList={paketCetak} opsi={opsiEkspor ?? hasil.opsi} tipe={cetak.tipe} />
       ) : null}
     </>
   );

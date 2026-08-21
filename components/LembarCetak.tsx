@@ -136,6 +136,18 @@ export default function LembarCetak({
                       ))}
                     </div>
                   ) : null}
+                  {opsi.kunciDiBawahOpsi ? (
+                    <div
+                      style={{
+                        fontSize: '9pt',
+                        paddingLeft: '5mm',
+                        marginTop: '0.4mm',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Jawaban: {opsi.pilihanGanda ? s.kunci : s.jawabanTeks}
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ol>

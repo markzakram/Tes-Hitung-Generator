@@ -49,6 +49,14 @@ for (const s of skenario) {
   console.log(`  soal          : ${lap.totalSoal} (${r.soalUnik} unik, ${r.duplikat} berulang antarpaket)`);
   console.log(`  pola terpakai : ${r.polaTerpakai} dari ${SEMUA_POLA.length} pola tersedia`);
   console.log(`  soal desimal  : ${r.soalDesimal}`);
+  if (opsi.pilihanGanda) {
+    const total = Object.values(r.perKunci).reduce((a, b) => a + b, 0) || 1;
+    const sebaran = Object.entries(r.perKunci)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => `${k}=${v} (${Math.round((v / total) * 100)}%)`)
+      .join(', ');
+    console.log(`  sebaran kunci : ${sebaran}`);
+  }
   console.log(`  kategori      : ${Object.entries(r.perKategori).map(([k, v]) => `${k}=${v}`).join(', ')}`);
   console.log(`  tingkat       : ${Object.entries(r.perTingkat).map(([k, v]) => `${k}=${v}`).join(', ')}`);
   console.log(`  waktu generate: ${ms.toFixed(0)} ms`);

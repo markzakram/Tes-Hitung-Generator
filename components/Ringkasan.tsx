@@ -25,6 +25,9 @@ export default function Ringkasan({
   waktuMs: number;
 }) {
   const n = (x: number) => x.toLocaleString('id-ID');
+  const kunci = Object.entries(r.perKunci).sort(([a], [b]) => a.localeCompare(b));
+  const totalKunci = kunci.reduce((a, [, v]) => a + v, 0);
+  const maxKunci = Math.max(1, ...kunci.map(([, v]) => v));
 
   return (
     <section className="space-y-3">
@@ -98,6 +101,42 @@ export default function Ringkasan({
           catatan={`${Math.round((r.soalDesimal / Math.max(1, r.totalSoal)) * 100)}% dari total`}
         />
       </div>
+
+      {kunci.length ? (
+        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2.5">
+          <div className="mb-2 flex items-baseline justify-between">
+            <span className="text-[10.5px] font-semibold uppercase tracking-wide text-slate-400">
+              Sebaran kunci jawaban
+            </span>
+            <span className="text-[10.5px] text-slate-400">
+              target merata {Math.round(100 / kunci.length)}% per huruf
+            </span>
+          </div>
+          <div className="flex gap-2">
+            {kunci.map(([huruf, jumlah]) => {
+              const persen = (jumlah / Math.max(1, totalKunci)) * 100;
+              return (
+                <div key={huruf} className="flex-1">
+                  {/* tinggi relatif terhadap huruf terbanyak: kalau merata,
+                      semua batang sama tinggi */}
+                  <div className="mb-1 flex h-16 items-end rounded bg-slate-100">
+                    <div
+                      className="w-full rounded bg-merah-500"
+                      style={{ height: `${Math.max(4, (jumlah / maxKunci) * 100)}%` }}
+                    />
+                  </div>
+                  <div className="angka text-center text-[11px] font-bold text-slate-700">
+                    {huruf}
+                  </div>
+                  <div className="angka text-center text-[10.5px] text-slate-400">
+                    {n(jumlah)} · {persen.toFixed(0)}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
