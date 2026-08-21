@@ -1,0 +1,29 @@
+{
+  "name": "tes-hitung-cepat-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generator paket soal Tes Hitung Cepat (mapping PT KAI) - 25 soal / 7 menit",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "generate": "tsx scripts/generate.ts",
+    "verify": "tsx scripts/verify.ts"
+  },
+  "dependencies": {
+    "docx": "^9.5.0",
+    "next": "^15.4.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^24.2.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

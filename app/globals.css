@@ -1,0 +1,97 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-merah-50: #fff5f2;
+  --color-merah-100: #ffe6de;
+  --color-merah-200: #ffc9b8;
+  --color-merah-500: #f26522;
+  --color-merah-600: #d94f10;
+  --color-merah-700: #b03e0b;
+  --color-biru-50: #eef4fb;
+  --color-biru-100: #d9e6f6;
+  --color-biru-600: #1c4f91;
+  --color-biru-700: #163d73;
+  --font-sans: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f6f7f9;
+  color: #16181d;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* angka soal selalu enak dibaca & sejajar */
+.angka {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+input[type='range'] {
+  accent-color: var(--color-merah-500);
+}
+
+/* ------------------------------------------------------ tampilan layar */
+
+.hanya-cetak {
+  display: none;
+}
+
+/* -------------------------------------------------------- tampilan cetak */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 10.5pt;
+  }
+
+  .tanpa-cetak {
+    display: none !important;
+  }
+
+  .hanya-cetak {
+    display: block !important;
+  }
+
+  .lembar {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .lembar:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .kolom-soal {
+    column-count: 2;
+    column-gap: 10mm;
+    column-fill: auto;
+  }
+
+  .butir {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .grid-kunci {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}
