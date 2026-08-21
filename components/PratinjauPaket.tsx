@@ -1,6 +1,6 @@
 'use client';
 
-import { BLOK } from '@/lib/mapping';
+import { BLOK, statusTingkat } from '@/lib/mapping';
 import type { OpsiGenerate, Paket } from '@/lib/types';
 
 const HURUF = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -43,7 +43,7 @@ export default function PratinjauPaket({
               </span>
               <span className="text-[12.5px] font-semibold text-slate-700">{b.kategori}</span>
               <span className="text-[12px] text-slate-400">•</span>
-              <span className="text-[12px] text-slate-500">{b.tingkat}</span>
+              <span className="text-[12px] text-slate-500">{statusTingkat(b.tingkat)}</span>
             </header>
 
             <ol className="grid gap-3 sm:grid-cols-2">
@@ -59,7 +59,8 @@ export default function PratinjauPaket({
                     <span className="min-w-0">
                       {opsi.tampilkanTingkat ? (
                         <span className="mb-0.5 block text-[10.5px] text-slate-400">
-                          <span className="font-semibold">Tingkat Kesulitan:</span> {s.tingkat}
+                          <span className="font-semibold">Tingkat Kesulitan:</span>{' '}
+                          {statusTingkat(s.tingkat)}
                         </span>
                       ) : null}
                       <span className="angka text-[15px] font-semibold text-slate-900">

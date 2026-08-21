@@ -10,7 +10,7 @@
  */
 
 import type { Document } from 'docx';
-import { DETIK_PER_SOAL } from '../mapping';
+import { DETIK_PER_SOAL, statusTingkat } from '../mapping';
 import { fmt } from '../num';
 import type { OpsiGenerate, Paket } from '../types';
 
@@ -198,7 +198,7 @@ export async function docxPembahasan(paketList: Paket[], opsi: OpsiGenerate): Pr
             spacing: { after: 60 },
             children: [
               new TextRun({ text: 'Tingkat Kesulitan: ', bold: true, size: 18, color: '555555' }),
-              new TextRun({ text: s.tingkat, size: 18, color: '555555' }),
+              new TextRun({ text: statusTingkat(s.tingkat), size: 18, color: '555555' }),
             ],
           }),
         );

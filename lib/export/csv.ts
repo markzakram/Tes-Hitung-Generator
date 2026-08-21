@@ -6,6 +6,7 @@
  * tanda × dan ÷ dengan benar.
  */
 
+import { statusTingkat } from '../mapping';
 import { pembahasanTeks } from '../pembahasan';
 import type { OpsiGenerate, Paket } from '../types';
 
@@ -44,7 +45,7 @@ export function csvSoal(paketList: Paket[], opsi: OpsiGenerate): string {
         p.kode,
         s.no,
         s.kategori,
-        s.tingkat,
+        statusTingkat(s.tingkat),
         s.subkategori,
         s.polaId,
         s.bentuk,

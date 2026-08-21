@@ -106,6 +106,18 @@ export const DISTRIBUSI = {
   TOTAL: { Mudah: 10, Sedang: 15, total: 25 },
 } as const;
 
+/**
+ * Status kesulitan untuk ditampilkan ke pengguna: cukup "Mudah" atau "Sedang".
+ *
+ * Blok 21-25 di dokumen mapping tertulis "Sedang (lebih menantang)". Keterangan
+ * dalam kurung itu menjelaskan beban hitungnya, bukan tingkat kesulitan yang
+ * berbeda, jadi tidak ikut dicetak di naskah soal. Nilai lengkapnya tetap
+ * disimpan pada data dan dipakai validator.
+ */
+export function statusTingkat(tingkat: Tingkat): 'Mudah' | 'Sedang' {
+  return tingkat === 'Mudah' ? 'Mudah' : 'Sedang';
+}
+
 /** Blok yang memuat nomor soal tertentu (1..25). */
 export function blokUntukNomor(no: number): Blok {
   const b = BLOK.find((x) => no >= x.dari && no <= x.sampai);

@@ -8,7 +8,7 @@
  */
 
 import type { jsPDF } from 'jspdf';
-import { DETIK_PER_SOAL } from '../mapping';
+import { DETIK_PER_SOAL, statusTingkat } from '../mapping';
 import { fmt } from '../num';
 import type { OpsiGenerate, Paket } from '../types';
 
@@ -234,7 +234,7 @@ export async function pdfPembahasan(paketList: Paket[], opsi: OpsiGenerate): Pro
 
       if (opsi.tampilkanTingkat) {
         bagian.push({
-          isi: `Tingkat Kesulitan: ${s.tingkat}`,
+          isi: `Tingkat Kesulitan: ${statusTingkat(s.tingkat)}`,
           size: 9,
           warna: ABU,
           setelah: 0.8,

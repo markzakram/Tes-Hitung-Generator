@@ -1,6 +1,6 @@
 'use client';
 
-import { DETIK_PER_SOAL } from '@/lib/mapping';
+import { DETIK_PER_SOAL, statusTingkat } from '@/lib/mapping';
 import { fmt } from '@/lib/num';
 import type { OpsiGenerate, Paket } from '@/lib/types';
 
@@ -51,7 +51,7 @@ export default function LembarCetak({
                 </div>
                 {opsi.tampilkanTingkat ? (
                   <div style={{ fontSize: '9pt', color: '#555', marginBottom: '1.2mm' }}>
-                    <strong>Tingkat Kesulitan:</strong> {s.tingkat}
+                    <strong>Tingkat Kesulitan:</strong> {statusTingkat(s.tingkat)}
                   </div>
                 ) : null}
                 <div

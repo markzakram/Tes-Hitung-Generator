@@ -50,6 +50,11 @@ pada rentang nomor yang sama.
 Distribusi per paket: **10 Mudah / 15 Sedang**; Operasi Tunggal 5, Campuran 10,
 Bertingkat 10. Rata-rata 16,8 detik per soal.
 
+Keterangan "(lebih menantang)" pada blok 21–25 menjelaskan beban hitungnya, bukan
+tingkat kesulitan yang berbeda. Di naskah soal, tingkat kesulitan dicetak sebagai
+status saja — **Mudah** atau **Sedang**. Nilai lengkapnya tetap disimpan pada data
+dan dipakai validator untuk mencocokkan tiap soal dengan bloknya.
+
 ### Pool bentuk soal
 
 `M` = bentuk yang tertulis persis di dokumen mapping. Sisanya variasi setara dengan
