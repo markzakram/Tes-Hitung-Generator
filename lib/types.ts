@@ -54,6 +54,8 @@ export type OpsiGenerate = {
   simbolBagi: '÷' | ':';
   /** cetak kunci tepat di bawah opsi tiap soal, bukan di lembar terpisah */
   kunciDiBawahOpsi: boolean;
+  /** cantumkan baris "Tingkat Kesulitan" di bawah nomor soal */
+  tampilkanTingkat: boolean;
   /** sebar variasi agar satu blok tidak memakai pola yang itu-itu saja */
   variasiMerata: boolean;
   /** tolak hasil antara / akhir yang negatif */
@@ -74,12 +76,16 @@ export const DEFAULT_OPSI: OpsiGenerate = {
   ketat: false,
   simbolBagi: '÷',
   kunciDiBawahOpsi: false,
+  tampilkanTingkat: true,
   variasiMerata: true,
   hindariNegatif: true,
   judul: 'TES HITUNG CEPAT',
   instansi: 'PT KAI',
   durasiMenit: 7,
 };
+
+/** Pilihan tampilan dokumen; tidak memengaruhi soal yang dihasilkan. */
+export type Tampilan = Pick<OpsiGenerate, 'kunciDiBawahOpsi' | 'tampilkanTingkat'>;
 
 export type Ringkasan = {
   totalPaket: number;

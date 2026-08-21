@@ -240,5 +240,6 @@ export function normalisasiOpsi(input: Partial<OpsiGenerate>): OpsiGenerate {
     seed: String(o.seed || 'KAI').slice(0, 64),
     simbolBagi: o.simbolBagi === ':' ? ':' : '÷',
     kunciDiBawahOpsi: Boolean(o.kunciDiBawahOpsi),
+    tampilkanTingkat: o.tampilkanTingkat !== false,
   };
 }

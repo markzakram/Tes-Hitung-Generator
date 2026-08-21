@@ -16,6 +16,7 @@
  *   --ketat            hanya pakai bentuk soal yang tertulis di mapping
  *   --tanpa-desimal    matikan bilangan desimal
  *   --acak-opsi        jangan urutkan opsi menaik
+ *   --tanpa-tingkat    jangan cantumkan baris "Tingkat Kesulitan" di tiap soal
  *   --langkah          sertakan ringkasan langkah di kunci .docx
  *   --simbol-bagi <s>  lambang pembagian: '÷' (default) atau ':'
  *   --pdf              tulis juga versi PDF dari tiap dokumen
@@ -65,6 +66,7 @@ const opsi: OpsiGenerate = normalisasiOpsi({
   ketat: flag('ketat'),
   desimal: !flag('tanpa-desimal'),
   urutkanOpsi: !flag('acak-opsi'),
+  tampilkanTingkat: !flag('tanpa-tingkat'),
   simbolBagi: nilai('simbol-bagi', '÷') === ':' ? ':' : '÷',
 });
 

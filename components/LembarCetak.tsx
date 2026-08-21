@@ -46,9 +46,14 @@ export default function LembarCetak({
 
             {p.soal.map((s) => (
               <div className="butir" key={s.no} style={{ marginBottom: '5mm' }}>
-                <div style={{ fontSize: '11pt', fontWeight: 700, marginBottom: '1mm' }}>
+                <div style={{ fontSize: '11pt', fontWeight: 700, marginBottom: '0.6mm' }}>
                   Soal {s.no}
                 </div>
+                {opsi.tampilkanTingkat ? (
+                  <div style={{ fontSize: '9pt', color: '#555', marginBottom: '1.2mm' }}>
+                    <strong>Tingkat Kesulitan:</strong> {s.tingkat}
+                  </div>
+                ) : null}
                 <div
                   className="angka"
                   style={{ fontSize: '12pt', paddingLeft: '5mm', marginBottom: '1.5mm' }}

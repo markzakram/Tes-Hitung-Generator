@@ -229,9 +229,19 @@ export async function pdfPembahasan(paketList: Paket[], opsi: OpsiGenerate): Pro
 
     for (const s of p.soal) {
       const bagian: Bagian[] = [
-        { isi: `Soal ${s.no}`, size: 11, bold: true, setelah: 0.6 },
-        { isi: `${s.soal} = ...`, size: 11.5, indent: 5, setelah: 1 },
+        { isi: `Soal ${s.no}`, size: 11, bold: true, setelah: 0.4 },
       ];
+
+      if (opsi.tampilkanTingkat) {
+        bagian.push({
+          isi: `Tingkat Kesulitan: ${s.tingkat}`,
+          size: 9,
+          warna: ABU,
+          setelah: 0.8,
+        });
+      }
+
+      bagian.push({ isi: `${s.soal} = ...`, size: 11.5, indent: 5, setelah: 1 });
 
       if (opsi.pilihanGanda) {
         for (const [k, o] of s.opsi.entries()) {

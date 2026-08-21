@@ -83,6 +83,7 @@ Dokumen **Soal + jawaban + pembahasan** berisi, untuk setiap butir:
 
 ```
 Soal 1
+Tingkat Kesulitan: Sedang
   (96 : 6) × 12 = ...
 
   A. 192
@@ -160,6 +161,7 @@ npm run generate -- --paket 100 --seed KAI-2026 --out output
 | `--ketat` | Hanya bentuk soal yang tertulis di mapping |
 | `--tanpa-desimal` | Matikan bilangan desimal |
 | `--acak-opsi` | Jangan urutkan opsi menaik |
+| `--tanpa-tingkat` | Jangan cantumkan baris "Tingkat Kesulitan" di tiap soal |
 | `--langkah` | Sertakan ringkasan langkah di kunci `.docx` |
 | `--pdf` | Tulis juga versi PDF dari tiap dokumen |
 | `--zip <isi>` | Bungkus satu berkas per paket jadi ZIP (`pembahasan`, `soal`, `berkunci`, `kunci`) |

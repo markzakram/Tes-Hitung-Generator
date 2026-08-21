@@ -187,9 +187,24 @@ export async function docxPembahasan(paketList: Paket[], opsi: OpsiGenerate): Pr
     for (const s of p.soal) {
       children.push(
         new Paragraph({
-          spacing: { before: 240, after: 60 },
+          spacing: { before: 240, after: opsi.tampilkanTingkat ? 20 : 60 },
           children: [new TextRun({ text: `Soal ${s.no}`, bold: true, size: 22 })],
         }),
+      );
+
+      if (opsi.tampilkanTingkat) {
+        children.push(
+          new Paragraph({
+            spacing: { after: 60 },
+            children: [
+              new TextRun({ text: 'Tingkat Kesulitan: ', bold: true, size: 18, color: '555555' }),
+              new TextRun({ text: s.tingkat, size: 18, color: '555555' }),
+            ],
+          }),
+        );
+      }
+
+      children.push(
         new Paragraph({
           spacing: { after: 100 },
           indent: { left: 280 },

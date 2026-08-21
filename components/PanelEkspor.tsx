@@ -12,7 +12,7 @@ import {
   type FormatBerkas,
   type IsiBerkas,
 } from '@/lib/export/berkas';
-import type { OpsiGenerate, Paket, Ringkasan } from '@/lib/types';
+import type { OpsiGenerate, Paket, Ringkasan, Tampilan } from '@/lib/types';
 
 function unduhBlob(nama: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
@@ -69,20 +69,47 @@ function Pilihan<T extends string>({
   );
 }
 
+function Centang({
+  aktif,
+  ubah,
+  judul,
+  deskripsi,
+}: {
+  aktif: boolean;
+  ubah: (v: boolean) => void;
+  judul: string;
+  deskripsi: string;
+}) {
+  return (
+    <label className="flex cursor-pointer items-start gap-2 text-[12px] text-slate-700">
+      <input
+        type="checkbox"
+        checked={aktif}
+        onChange={(e) => ubah(e.target.checked)}
+        className="mt-0.5 h-4 w-4 accent-merah-500"
+      />
+      <span>
+        <span className="font-semibold">{judul}</span>
+        <span className="block text-[11px] leading-snug text-slate-500">{deskripsi}</span>
+      </span>
+    </label>
+  );
+}
+
 export default function PanelEkspor({
   paket,
   opsi,
   ringkasan,
-  kunciInline,
-  setKunciInline,
+  tampilan,
+  setTampilan,
   onCetak,
   onGalat,
 }: {
   paket: Paket[];
   opsi: OpsiGenerate;
   ringkasan: Ringkasan;
-  kunciInline: boolean;
-  setKunciInline: (v: boolean) => void;
+  tampilan: Tampilan;
+  setTampilan: (v: Tampilan) => void;
   onCetak: (tipe: TipeCetak, semua: boolean) => void;
   onGalat: (pesan: string) => void;
 }) {
@@ -91,7 +118,7 @@ export default function PanelEkspor({
   const [zipIsi, setZipIsi] = useState<IsiBerkas>('pembahasan');
   const [zipFormat, setZipFormat] = useState<FormatBerkas>('docx');
 
-  const opsiEkspor: OpsiGenerate = { ...opsi, kunciDiBawahOpsi: kunciInline };
+  const opsiEkspor: OpsiGenerate = { ...opsi, ...tampilan };
   const dasar = `${namaAman(opsi.judul)}-${namaAman(opsi.seed)}-${paket.length}paket`;
 
   const jalankan = async (kunci: string, fn: () => Promise<void> | void) => {
@@ -178,23 +205,22 @@ export default function PanelEkspor({
           ))}
         </div>
 
-        {opsi.pilihanGanda ? (
-          <label className="mt-2 flex cursor-pointer items-start gap-2 px-1 text-[12px] text-slate-700">
-            <input
-              type="checkbox"
-              checked={kunciInline}
-              onChange={(e) => setKunciInline(e.target.checked)}
-              className="mt-0.5 h-4 w-4 accent-merah-500"
+        <div className="mt-2 space-y-1.5 px-1">
+          <Centang
+            aktif={tampilan.tampilkanTingkat}
+            ubah={(v) => setTampilan({ ...tampilan, tampilkanTingkat: v })}
+            judul="Cantumkan tingkat kesulitan"
+            deskripsi='Baris "Tingkat Kesulitan: Mudah/Sedang" muncul tepat di bawah nomor soal pada dokumen pembahasan.'
+          />
+          {opsi.pilihanGanda ? (
+            <Centang
+              aktif={tampilan.kunciDiBawahOpsi}
+              ubah={(v) => setTampilan({ ...tampilan, kunciDiBawahOpsi: v })}
+              judul="Kunci tepat di bawah opsi"
+              deskripsi='Berlaku untuk "Naskah soal" dan cetakannya. Matikan untuk naskah yang dibagikan ke peserta.'
             />
-            <span>
-              <span className="font-semibold">Kunci tepat di bawah opsi</span>
-              <span className="block text-[11px] leading-snug text-slate-500">
-                Berlaku untuk &quot;Naskah soal&quot; dan cetakannya. Matikan untuk naskah yang
-                dibagikan ke peserta.
-              </span>
-            </span>
-          </label>
-        ) : null}
+          ) : null}
+        </div>
       </div>
 
       {/* ------------------------------------------------------ zip per paket */}

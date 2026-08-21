@@ -12,7 +12,13 @@ import TabelMapping from '@/components/TabelMapping';
 import { generateSemua, normalisasiOpsi, ringkas } from '@/lib/generate';
 import { DETIK_PER_SOAL } from '@/lib/mapping';
 import { fmt } from '@/lib/num';
-import { DEFAULT_OPSI, type OpsiGenerate, type Paket, type Ringkasan as TRingkasan } from '@/lib/types';
+import {
+  DEFAULT_OPSI,
+  type OpsiGenerate,
+  type Paket,
+  type Ringkasan as TRingkasan,
+  type Tampilan,
+} from '@/lib/types';
 import { validasiSemua, type LaporanValidasi } from '@/lib/validate';
 
 type Hasil = {
@@ -34,7 +40,12 @@ export default function Halaman() {
   const [aktif, setAktif] = useState(0);
   const [tampilKunci, setTampilKunci] = useState(false);
   const [cetak, setCetak] = useState<{ tipe: TipeCetak; semua: boolean } | null>(null);
-  const [kunciInline, setKunciInline] = useState(false);
+  // pilihan tampilan dokumen: tidak memengaruhi soal, jadi bisa diubah
+  // kapan saja tanpa generate ulang
+  const [tampilan, setTampilan] = useState<Tampilan>({
+    kunciDiBawahOpsi: false,
+    tampilkanTingkat: true,
+  });
   const sudahJalan = useRef(false);
 
   const ubah = useCallback((patch: Partial<OpsiGenerate>) => {
@@ -84,7 +95,7 @@ export default function Halaman() {
     return cetak.semua ? hasil.paket : [hasil.paket[aktif]];
   }, [hasil, cetak, aktif]);
 
-  const opsiEkspor = hasil ? { ...hasil.opsi, kunciDiBawahOpsi: kunciInline } : null;
+  const opsiEkspor = hasil ? { ...hasil.opsi, ...tampilan } : null;
   const paketAktif = hasil?.paket[aktif];
 
   return (
@@ -150,8 +161,8 @@ export default function Halaman() {
                     paket={hasil.paket}
                     opsi={hasil.opsi}
                     ringkasan={hasil.ring}
-                    kunciInline={kunciInline}
-                    setKunciInline={setKunciInline}
+                    tampilan={tampilan}
+                    setTampilan={setTampilan}
                     onCetak={(tipe, semua) => setCetak({ tipe, semua })}
                     onGalat={setGalat}
                   />
@@ -204,7 +215,7 @@ export default function Halaman() {
                     {paketAktif ? (
                       <PratinjauPaket
                         paket={paketAktif}
-                        opsi={hasil.opsi}
+                        opsi={opsiEkspor ?? hasil.opsi}
                         tampilKunci={tampilKunci}
                       />
                     ) : null}

@@ -94,6 +94,7 @@ export async function GET(req: Request) {
       hindariNegatif: bool(q.get('hindariNegatif'), DEFAULT_OPSI.hindariNegatif),
       simbolBagi: q.get('simbolBagi') === ':' ? ':' : '÷',
       kunciDiBawahOpsi: bool(q.get('kunciDiBawahOpsi'), DEFAULT_OPSI.kunciDiBawahOpsi),
+      tampilkanTingkat: bool(q.get('tampilkanTingkat'), DEFAULT_OPSI.tampilkanTingkat),
     });
     return balas(opsi, q.get('format'));
   } catch (e) {

@@ -56,8 +56,15 @@ export default function PratinjauPaket({
                     <span className="angka w-6 shrink-0 text-[12px] font-bold text-slate-400">
                       {s.no}.
                     </span>
-                    <span className="angka text-[15px] font-semibold text-slate-900">
-                      {s.soal} = ...
+                    <span className="min-w-0">
+                      {opsi.tampilkanTingkat ? (
+                        <span className="mb-0.5 block text-[10.5px] text-slate-400">
+                          <span className="font-semibold">Tingkat Kesulitan:</span> {s.tingkat}
+                        </span>
+                      ) : null}
+                      <span className="angka text-[15px] font-semibold text-slate-900">
+                        {s.soal} = ...
+                      </span>
                     </span>
                   </div>
 
